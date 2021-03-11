@@ -1,4 +1,5 @@
 const modifiers = require('./modifiers');
+
 import Frequent from './frequent';
 
 let json = null;
@@ -116,47 +117,6 @@ const Emojis = {
             // Insert the emoji where the rich editor caret was
             offset = input.dataset.offset;
         }
-
-        // Insert the pictographImage
-        const pictographs = input.parentNode.querySelector('.EmojiPanel__pictographs');
-        const url = 'https://abs.twimg.com/emoji/v2/72x72/' + emoji.unicode + '.png';
-        const image = document.createElement('img');
-        image.classList.add('RichEditor-pictographImage');
-        image.setAttribute('src', url);
-        image.setAttribute('draggable', false);
-        pictographs.appendChild(image);
-
-        const span = document.createElement('span');
-        span.classList.add('EmojiPanel__pictographText');
-        span.setAttribute('title', emoji.name);
-        span.setAttribute('aria-label', emoji.name);
-        span.dataset.pictographText = emoji.char;
-        span.dataset.pictographImage = url;
-        span.innerHTML = '&emsp;';
-
-        // If it's empty, remove the default content of the input
-        const div = input.querySelector('div');
-        if(div.innerHTML == '<br>') {
-            div.innerHTML = '';
-        }
-
-        // Replace each pictograph span with it's native character
-        const picts = div.querySelectorAll('.EmojiPanel__pictographText');
-        [].forEach.call(picts, pict => {
-            div.replaceChild(document.createTextNode(pict.dataset.pictographText), pict);
-        });
-
-        // Split content into array, insert emoji at offset index
-        let content = emojiAware.split(div.textContent);
-        content.splice(offset, 0, emoji.char);
-        content = content.join('');
-
-        div.textContent = content;
-
-        // Trigger a refresh of the input
-        const event = document.createEvent('HTMLEvents');
-        event.initEvent('mousedown', false, true);
-        input.dispatchEvent(event);
 
         // Update the offset to after the inserted emoji
         input.dataset.offset = parseInt(input.dataset.offset, 10) + 1;
