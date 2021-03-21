@@ -123,7 +123,7 @@ const Create = (options, emit, toggle) => {
     if(options.locale.brand) {
         const brand = document.createElement('a');
         brand.classList.add(options.classnames.brand);
-        brand.setAttribute('href', 'https://emojipanel.js.org');
+        brand.setAttribute('href', 'https://github.com/touuki/EmojiPanel');
         brand.textContent = options.locale.brand;
         footer.appendChild(brand);
     }

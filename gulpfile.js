@@ -14,7 +14,7 @@ let dev = false;
 gulp.task('js', (done) => {
     const bundler = watchify(browserify('./src/index.js', { debug: dev })
         .transform(babel, {
-            presets: ['es2015']
+            presets: ['@babel/preset-env']
         }));
 
     const rebundle = () => {

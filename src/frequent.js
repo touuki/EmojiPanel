@@ -1,5 +1,3 @@
-
-
 class Frequent {
     getAll() {
         var list = localStorage.getItem('EmojiPanel-frequent') || '[]';

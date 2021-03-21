@@ -6,14 +6,13 @@ const List = require('./list');
 const classnames = require('./classnames');
 
 const defaults = {
-    search: true,
+    search: false, // Not yet implement
     frequent: true,
-    fitzpatrick: 'a',
     hidden_categories: [],
 
-    pack_url: null,
-    json_url: '/emojis.json',
-    json_save_local: false,
+    sprites_url: '/twemoji.png',
+    fallback_emoji: false,
+    extra_json_url: false,
 
     tether: true,
     placement: 'bottom',
@@ -51,8 +50,8 @@ export default class EmojiPanel extends EventEmitter {
         this.tether = create.tether;
 
         Emojis.load(this.options)
-            .then(res => {
-                List(this.options, this.panel, res[1], this.emit.bind(this));
+            .then(json => {
+                List(this.options, this.panel, json, this.emit.bind(this));
             });
     }
 

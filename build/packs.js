@@ -1,6 +1,8 @@
 const fsPromises = require('fs').promises
 const path = require('path')
 const gm = require('gm')
+const crypto = require('crypto')
+const joypixels = require('emoji-toolkit')
 
 const packs = [
     {
@@ -27,32 +29,50 @@ const buildPack = async (pack) => {
 
     let xIndex = 0, yIndex = 0
     for (const emoji of emojis) {
-        if (emoji.category in categoriesObj) {
-            const imgPath = pack.getImgPath(emoji.code_points.fully_qualified)
+        if (emoji.category in categoriesObj && !emoji.code_points.diversity_parent) {
+            let imgPath = pack.getImgPath(emoji.code_points.fully_qualified)
             try {
                 await fsPromises.access(imgPath)
             } catch (error) {
-                continue
+                if (emoji.code_points.fully_qualified.indexOf('-fe0f') != -1) {
+                    imgPath = pack.getImgPath(emoji.code_points.fully_qualified.replace('-fe0f', ''))
+                    try {
+                        await fsPromises.access(imgPath)
+                    } catch (error) {
+                        continue
+                    }
+                } else {
+                    continue
+                }
             }
             const position = [pack.spriteSize * xIndex, pack.spriteSize * yIndex]
             img.in('-page', `+${position[0]}+${position[1]}`, imgPath)
-            categoriesObj[emoji.category].emojis.push({ code_point: emoji.code_points.base, position })
+            categoriesObj[emoji.category].emojis.push({ char: joypixels.convert(emoji.code_points.fully_qualified), position })
             ++xIndex >= pack.numPerLine && (xIndex = 0, yIndex++)
         }
     }
 
-    await fsPromises.writeFile(path.join(__dirname, '..', `docs/${pack.name}.json`), JSON.stringify(categoriesObj))
-    await fsPromises.writeFile(path.join(__dirname, '..', `dist/${pack.name}.json`), JSON.stringify(categoriesObj))
-    await new Promise((resolve, reject) => img.mosaic().write(path.join(__dirname, '..', `dist/${pack.name}.png`),
-        function (err) {
-            if (err) {
-                reject(err)
-            } else {
-                resolve()
+    pack.categories = categories
+
+    await fsPromises.writeFile(path.join(__dirname, '..', `dist/${pack.name}.json`), JSON.stringify(pack))
+    const md5sum = crypto.createHash('md5')
+    md5sum.update(img._in.join(' '))
+    const hash = md5sum.digest('hex').substr(0, 8)
+    const pngPath = path.join(__dirname, '..', `dist/${pack.name}.${hash}.png`)
+    try {
+        await fsPromises.access(pngPath)
+    } catch (error) {
+        await new Promise((resolve, reject) => img.mosaic().write(pngPath,
+            function (err) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve()
+                }
             }
-        }
-    ))
-    await fsPromises.copyFile(path.join(__dirname, '..', `dist/${pack.name}.png`), path.join(__dirname, '..', `docs/${pack.name}.png`))
+        ))
+        await fsPromises.copyFile(pngPath, path.join(__dirname, '..', `docs/${pack.name}.${hash}.png`))
+    }
 };
 
 
@@ -60,8 +80,6 @@ const build = async () => {
     for (const pack of packs) {
         await buildPack(pack)
     }
-    await fsPromises.copyFile(path.join(pathToJoyPixels, 'emoji.json'), path.join(__dirname, '..', 'docs/emoji.json'))
-    await fsPromises.copyFile(path.join(pathToJoyPixels, 'emoji.json'), path.join(__dirname, '..', 'dist/emoji.json'))
 };
 
 build().catch(err => console.error(err));

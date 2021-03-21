@@ -38,8 +38,7 @@
     .emoji {
         width: $EmojiPanel-emoji-width;
         height: $EmojiPanel-emoji-width;
-        border: 5px solid transparent;
-        border-radius: $EmojiPanel-border-radius;
+        padding: 5px;
         font-size: ($EmojiPanel-emoji-width - 10px);
         line-height: 1.1;
         cursor: pointer;

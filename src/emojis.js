@@ -1,92 +1,45 @@
-const modifiers = require('./modifiers');
-
 import Frequent from './frequent';
 
-let json = null;
+let json = require('../dist/twemoji.json');
 const Emojis = {
-    load: options => {
-        // Load and inject the SVG sprite into the DOM
-        let svgPromise = Promise.resolve();
-        if(options.pack_url && !document.querySelector(`.${options.classnames.svg}`)) {
-            svgPromise = new Promise(resolve => {
-                const svgXhr = new XMLHttpRequest();
-                svgXhr.open('GET', options.pack_url, true);
-                svgXhr.onload = () => {
-                    const container = document.createElement('div');
-                    container.classList.add(options.classnames.svg);
-                    container.style.display = 'none';
-                    container.innerHTML = svgXhr.responseText;
-                    document.body.appendChild(container);
-                    resolve();
-                };
-                svgXhr.send();
-            });
+    load: options => new Promise((resolve, reject) => {
+        if (options.extra_json_url) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', options.extra_json_url, true);
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    json = JSON.parse(xhr.responseText);
+                    resolve(json);
+                }
+            };
+            xhr.send();
+        } else {
+            resolve(json)
         }
-
-        // Load the emojis json
-        if (! json && options.json_save_local) {
-            try {
-                json = JSON.parse(localStorage.getItem('EmojiPanel-json'));
-            } catch (e) {
-                json = null;
-            }
-        }
-
-        let jsonPromise = Promise.resolve(json);
-        if(json == null) {
-            jsonPromise = new Promise(resolve => {
-                const emojiXhr = new XMLHttpRequest();
-                emojiXhr.open('GET', options.json_url, true);
-                emojiXhr.onreadystatechange = () => {
-                    if(emojiXhr.readyState == XMLHttpRequest.DONE && emojiXhr.status == 200) {
-                        if (options.json_save_local) {
-                            localStorage.setItem('EmojiPanel-json', emojiXhr.responseText);
-                        }
-
-                        json = JSON.parse(emojiXhr.responseText);
-                        resolve(json);
-                    }
-                };
-                emojiXhr.send();
-            });
-        }
-
-        return Promise.all([ svgPromise, jsonPromise ]);
-    },
+    }),
     createEl: (emoji, options) => {
-        if(options.pack_url) {
-            if(document.querySelector(`.${options.classnames.svg} [id="${emoji.unicode}"]`)) {
-                return `<svg viewBox="0 0 20 20"><use xlink:href="#${emoji.unicode}"></use></svg>`;
-            }
+        if (!options.fallback_emoji) {
+            const sprite = document.createElement('div');
+            sprite.style.height = '20px'
+            sprite.style.width = '20px'
+            sprite.style['background-image'] = `url("${options.sprites_url}")`;
+            sprite.style['background-size'] = `${20 * json.numPerLine}px`;
+            sprite.style['background-position'] = `-${emoji.position[0]/json.spriteSize*20}px -${emoji.position[1]/json.spriteSize*20}px`;
+            return sprite.outerHTML;
         }
 
         // Fallback to the emoji char if the pack does not have the sprite, or no pack
         return emoji.char;
     },
     createButton: (emoji, options, emit) => {
-        if(emoji.fitzpatrick && options.fitzpatrick) {
-            // Remove existing modifiers
-            Object.keys(modifiers).forEach(i => emoji.unicode = emoji.unicode.replace(modifiers[i].unicode, ''));
-            Object.keys(modifiers).forEach(i => emoji.char = emoji.char.replace(modifiers[i].char, ''));
-
-            // Append fitzpatrick modifier
-            emoji.unicode += modifiers[options.fitzpatrick].unicode;
-            emoji.char += modifiers[options.fitzpatrick].char;
-        }
 
         const button = document.createElement('button');
         button.setAttribute('type', 'button');
         button.innerHTML = Emojis.createEl(emoji, options);
         button.classList.add('emoji');
-        button.dataset.unicode = emoji.unicode;
         button.dataset.char = emoji.char;
-        button.dataset.category = emoji.category;
-        button.dataset.name = emoji.name;
-        if(emoji.fitzpatrick) {
-            button.dataset.fitzpatrick = emoji.fitzpatrick;
-        }
 
-        if(emit) {
+        if (emit) {
             button.addEventListener('click', () => {
                 emit('select', emoji);
                 if (options.frequent == true &&
@@ -97,7 +50,7 @@ const Emojis = {
                     frequentResults.style.display = 'block';
                 }
 
-                if(options.editable) {
+                if (options.editable) {
                     Emojis.write(emoji, options);
                 }
             });
@@ -107,13 +60,13 @@ const Emojis = {
     },
     write: (emoji, options) => {
         const input = options.editable;
-        if(!input) {
+        if (!input) {
             return;
         }
 
         // Insert the emoji at the end of the text by default
         let offset = input.textContent.length;
-        if(input.dataset.offset) {
+        if (input.dataset.offset) {
             // Insert the emoji where the rich editor caret was
             offset = input.dataset.offset;
         }

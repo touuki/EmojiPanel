@@ -26,6 +26,7 @@
   },
   "homepage": "https://emojipanel.js.org",
   "devDependencies": {
+    "@babel/preset-env": "^7.13.10",
     "babelify": "^10.0.0",
     "emoji-toolkit": "^6.5.1",
     "gm": "^1.23.1",

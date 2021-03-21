@@ -158,14 +158,7 @@
         window.onload = () => {
             var giantEmoji = document.querySelector('.giant-emoji');
             var home = new EmojiPanel({
-                container: '#home',
-                pack_url: '/img/twemoji.svg'
-            });
-            home.addListener('select', emoji => {
-                giantEmoji.querySelector('use').setAttribute('xlink:href', '#' + emoji.unicode);
-                giantEmoji.classList.add('active');
-
-                window.setTimeout(() => giantEmoji.classList.remove('active'), 300);
+                container: '#home'
             });
         };
     </script>
