@@ -24,7 +24,7 @@ const Emojis = {
             sprite.style.width = '20px'
             sprite.style['background-image'] = `url("${options.sprites_url}")`;
             sprite.style['background-size'] = `${20 * json.numPerLine}px`;
-            sprite.style['background-position'] = `-${emoji.position[0]/json.spriteSize*20}px -${emoji.position[1]/json.spriteSize*20}px`;
+            sprite.style['background-position'] = `-${emoji.position[0] / json.spriteSize * 20}px -${emoji.position[1] / json.spriteSize * 20}px`;
             return sprite.outerHTML;
         }
 
@@ -47,7 +47,6 @@ const Emojis = {
                     let frequentResults = document.querySelector(`.${options.classnames.frequentResults}`);
 
                     frequentResults.appendChild(Emojis.createButton(emoji, options, emit));
-                    frequentResults.style.display = 'block';
                 }
 
                 if (options.editable) {

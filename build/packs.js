@@ -53,6 +53,7 @@ const buildPack = async (pack) => {
     }
 
     pack.categories = categories
+    pack.frequent_svg = await fsPromises.readFile(path.join(pathToJoyPixels, `extras/category_icons/recent.svg`), 'utf8')
 
     await fsPromises.writeFile(path.join(__dirname, '..', `dist/${pack.name}.json`), JSON.stringify(pack))
     const md5sum = crypto.createHash('md5')
@@ -71,7 +72,7 @@ const buildPack = async (pack) => {
                 }
             }
         ))
-        await fsPromises.copyFile(pngPath, path.join(__dirname, '..', `docs/${pack.name}.${hash}.png`))
+        await fsPromises.copyFile(pngPath, path.join(__dirname, '..', `docs/img/${pack.name}.png`))
     }
 };
 

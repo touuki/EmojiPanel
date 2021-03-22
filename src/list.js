@@ -1,3 +1,5 @@
+import Frequent from './frequent';
+
 const Emojis = require('./emojis');
 
 const list = (options, panel, json, emit) => {
@@ -13,10 +15,23 @@ const list = (options, panel, json, emit) => {
     while (categories.firstChild) {
         categories.removeChild(categories.firstChild);
     }
+
+    if (options.frequent == true) {
+        const categoryLink = document.createElement('button');
+        categoryLink.classList.add(options.classnames.emoji);
+        categoryLink.setAttribute('title', options.locale.frequent);
+        categoryLink.innerHTML = json.frequent_svg;
+        categoryLink.addEventListener('click', e => {
+            const title = options.container.querySelector('.' + options.classnames.frequentTitle);
+            results.scrollTop = title.offsetTop - results.offsetTop;
+        });
+        categories.appendChild(categoryLink);
+    }
+
     json.categories.forEach(category => {
 
         // Don't show the link to a hidden category
-        if(options.hidden_categories.indexOf(category.category) > -1) {
+        if (options.hidden_categories.indexOf(category.category) > -1) {
             return;
         }
 
@@ -32,13 +47,13 @@ const list = (options, panel, json, emit) => {
     });
 
     // Handle the search input
-    if(options.search == true) {
+    if (options.search == true) {
         searchInput.addEventListener('input', e => {
             const emojis = results.querySelectorAll('.' + options.classnames.emoji);
             const titles = results.querySelectorAll('.' + options.classnames.category);
 
             const value = e.target.value.replace(/-/g, '').toLowerCase();
-            if(value.length > 0) {
+            if (value.length > 0) {
                 const matched = [];
                 json.categories.forEach(category => {
                     category.emojis.forEach(emoji => {
@@ -46,12 +61,12 @@ const list = (options, panel, json, emit) => {
                             keyword = keyword.replace(/-/g, '').toLowerCase();
                             return keyword.indexOf(value) > -1;
                         });
-                        if(keywordMatch) {
+                        if (keywordMatch) {
                             matched.push(emoji.char);
                         }
                     });
                 });
-                if(matched.length == 0) {
+                if (matched.length == 0) {
                     emptyState.style.display = 'block';
                 } else {
                     emptyState.style.display = 'none';
@@ -60,7 +75,7 @@ const list = (options, panel, json, emit) => {
                 emit('search', { value, matched });
 
                 emojis.forEach(emoji => {
-                    if(matched.indexOf(emoji.dataset.char) == -1) {
+                    if (matched.indexOf(emoji.dataset.char) == -1) {
                         emoji.style.display = 'none';
                     } else {
                         emoji.style.display = 'inline-block';
@@ -71,7 +86,7 @@ const list = (options, panel, json, emit) => {
                 });
                 searchTitle.style.display = 'block';
 
-                if(options.frequent == true) {
+                if (options.frequent == true) {
                     frequentResults.style.display = 'none';
                 }
             } else {
@@ -84,19 +99,8 @@ const list = (options, panel, json, emit) => {
                 searchTitle.style.display = 'none';
                 emptyState.style.display = 'none';
 
-                let frequentList = localStorage.getItem('EmojiPanel-frequent');
-                if(frequentList) {
-                    frequentList = JSON.parse(frequentList);
-                } else {
-                    frequentList = [];
-                }
-
-                if(options.frequent == true) {
-                    if(frequentList.length > 0) {
-                        frequentResults.style.display = 'block';
-                    } else {
-                        frequentResults.style.display = 'none';
-                    }
+                if (options.frequent == true) {
+                    frequentResults.style.display = 'block';
                 }
             }
 
@@ -107,30 +111,26 @@ const list = (options, panel, json, emit) => {
     // Fill the results with emojis
     results.querySelector('.EmojiPanel-loading').remove();
 
-    if(options.frequent == true) {
-        let frequentList = localStorage.getItem('EmojiPanel-frequent');
-        if(frequentList) {
-            frequentList = JSON.parse(frequentList);
-        } else {
-            frequentList = [];
-        }
+    if (options.frequent == true) {
+        frequentResults.style.display = 'block';
 
-        if(frequentList.length == 0) {
-            frequentResults.style.display = 'none';
-        } else {
-            frequentResults.style.display = 'block';
+        let num = Frequent.list.length;
+        if (options.frequent_max_num && num > options.frequent_max_num) {
+            num = options.frequent_max_num
         }
-
-        frequentList.forEach(emoji => {
-            frequentResults.appendChild(Emojis.createButton(emoji, options, emit));
-        });
+        for (let i = 0; i < num; i++) {
+            const emoji = Frequent.findEmoji(Frequent.list[i], json)
+            if (emoji) {
+                frequentResults.appendChild(Emojis.createButton(emoji, options, emit));
+            }
+        }
 
         results.appendChild(frequentResults);
     }
 
     json.categories.forEach(category => {
         // Don't show any hidden categories
-        if(options.hidden_categories.indexOf(category.name) > -1) {
+        if (options.hidden_categories.indexOf(category.name) > -1) {
             return;
         }
 
