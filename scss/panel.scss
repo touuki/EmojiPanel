@@ -1,7 +1,6 @@
 @import "variables";
 
 @import "header";
-@import "footer";
 @import "results";
 
 .EmojiPanel__tooltip {
@@ -13,17 +12,23 @@
     border-radius: $EmojiPanel-border-radius;
     background: $EmojiPanel-background-panel;
     text-align: left;
-
+    
+    * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    
     @media(min-width: $EmojiPanel-width) {
         width: $EmojiPanel-width;
     }
 
     &--trigger {
-        visibility: hidden;
+        display: none;
         pointer-events: none;
     }
     &--open {
-        visibility: visible;
+        display: block;
         pointer-events: inherit;
     }
 

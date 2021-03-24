@@ -2,7 +2,7 @@ const Tether = require('tether');
 
 const Emojis = require('./emojis');
 
-const Create = (options, emit, toggle) => {
+const Create = (options, toggle) => {
     if(options.editable) {
         // Set the caret offset on the input
         const handleChange = e => {
@@ -116,20 +116,10 @@ const Create = (options, emit, toggle) => {
 
     results.appendChild(loadingResults);
 
-    const footer = document.createElement('footer');
-    footer.classList.add(options.classnames.footer);
-    panel.appendChild(footer);
-
-    if(options.locale.brand) {
-        const brand = document.createElement('a');
-        brand.classList.add(options.classnames.brand);
-        brand.setAttribute('href', 'https://github.com/touuki/EmojiPanel');
-        brand.textContent = options.locale.brand;
-        footer.appendChild(brand);
-    }
-
     // Append the dropdown menu to the container
-    options.container.appendChild(panel);
+    if (options.container) {
+        options.container.appendChild(panel);
+    }
 
     // Tether the dropdown to the trigger
     let tether;

@@ -22,17 +22,41 @@ gulp.task('js', (done) => {
 
         return bundler.bundle()
             .once('error', function(err) { console.error(err); this.emit('end'); })
-            .pipe(source('emojipanel.js'))
+            .pipe(source('emojipanel.min.js'))
             .pipe(buffer())
             .pipe(!dev ? uglify() : util.noop())
             .pipe(gulp.dest('./dist'))
             .pipe(gulp.dest('./docs/js'))
             .once('end', () => {
                 console.log('-> bundled!')
+            });
+    };
 
-                if(!dev) {
-                    process.exit();
-                }
+    if(dev) {
+        bundler.on('update', () => rebundle());
+    }
+
+    rebundle();
+    done();
+});
+
+gulp.task('tinymce4', (done) => {
+    const bundler = watchify(browserify('./src/tinymce4-plugin.js', { debug: dev })
+        .transform(babel, {
+            presets: ['@babel/preset-env']
+        }));
+
+    const rebundle = () => {
+        console.log('-> bundling plugin...');
+
+        return bundler.bundle()
+            .once('error', function(err) { console.error(err); this.emit('end'); })
+            .pipe(source('tinymce4-emojipanel.min.js'))
+            .pipe(buffer())
+            .pipe(!dev ? uglify() : util.noop())
+            .pipe(gulp.dest('./dist'))
+            .once('end', () => {
+                console.log('-> bundled plugin!')
             });
     };
 
@@ -47,21 +71,21 @@ gulp.task('js', (done) => {
 gulp.task('scss', (done) => {
     gulp.src('./scss/panel.scss')
         .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-        .pipe(rename('emojipanel.css'))
+        .pipe(rename('emojipanel.min.css'))
         .pipe(gulp.dest('./dist'))
         .pipe(gulp.dest('./docs/css'));
 
     done();
 });
 
-gulp.task('build', gulp.series('scss', 'js'));
+gulp.task('build', gulp.series('scss', 'js', 'tinymce4'));
 
 gulp.task('dev', (done) => {
     dev = true;
     done();
 })
 
-gulp.task('watch', gulp.series('dev', 'scss', 'js', (done) => {
+gulp.task('watch', gulp.series('dev', 'scss', 'js', 'tinymce4', (done) => {
     gulp.watch('scss/**/*.scss', gulp.series('scss'));
     done();
 }));

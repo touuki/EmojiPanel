@@ -1,5 +1,3 @@
-const { EventEmitter } = require('fbemitter');
-
 const Create = require('./create');
 const Emojis = require('./emojis');
 const List = require('./list');
@@ -11,7 +9,6 @@ const defaults = {
     hidden_categories: [],
 
     //sprites_url: '/twemoji.png',
-    fallback_emoji: false,
     extra_json_url: false,
 
     tether: true,
@@ -21,7 +18,6 @@ const defaults = {
 
     locale: {
         add: 'Add emoji',
-        brand: 'EmojiPanel',
         frequent: 'Frequently used',
         loading: 'Loading...',
         no_results: 'No results',
@@ -29,15 +25,13 @@ const defaults = {
         search_results: 'Search results'
     },
     icons: {
-        search: '<span class="fa fa-search"></span>'
+        search: '<span class="fas fa-search"></span>'
     },
     classnames
 };
 
-export default class EmojiPanel extends EventEmitter {
+export default class EmojiPanel {
     constructor(options) {
-        super();
-
         this.options = Object.assign({}, defaults, options);
 
         const els = ['container', 'trigger', 'editable'];
@@ -59,15 +53,16 @@ export default class EmojiPanel extends EventEmitter {
             return
         }
         this._init = true
-        const create = Create(this.options, this.emit.bind(this), this.toggle.bind(this));
+        const create = Create(this.options, this.toggle.bind(this));
         this.panel = create.panel;
         this.tether = create.tether;
 
         Emojis.load(this.options)
             .then(json => {
-                List(this.options, this.panel, json, this.emit.bind(this));
+                List(this.options, this.panel, json);
                 if (this.options.trigger) {
                     this.toggle();
+                    this.reposition();
                 }
             });
     }
@@ -76,7 +71,6 @@ export default class EmojiPanel extends EventEmitter {
         const open = this.panel.classList.toggle(this.options.classnames.open);
         const searchInput = this.panel.querySelector('.' + this.options.classnames.searchInput);
 
-        this.emit('toggle', open);
         if (open && this.options.search && searchInput) {
             searchInput.focus();
         }

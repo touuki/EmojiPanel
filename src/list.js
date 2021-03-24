@@ -2,14 +2,13 @@ import Frequent from './frequent';
 
 const Emojis = require('./emojis');
 
-const list = (options, panel, json, emit) => {
+const list = (options, panel, json) => {
     const categories = panel.querySelector('.' + options.classnames.categories);
     const searchInput = panel.querySelector('.' + options.classnames.searchInput);
     const searchTitle = panel.querySelector('.' + options.classnames.searchTitle);
     const frequentResults = panel.querySelector('.' + options.classnames.frequentResults);
     const results = panel.querySelector('.' + options.classnames.results);
     const emptyState = panel.querySelector('.' + options.classnames.noResults);
-    const footer = panel.querySelector('.' + options.classnames.footer);
 
     // Update the category links
     while (categories.firstChild) {
@@ -22,7 +21,7 @@ const list = (options, panel, json, emit) => {
         categoryLink.setAttribute('title', options.locale.frequent);
         categoryLink.innerHTML = json.frequent_svg;
         categoryLink.addEventListener('click', e => {
-            const title = options.container.querySelector('.' + options.classnames.frequentTitle);
+            const title = panel.querySelector('.' + options.classnames.frequentTitle);
             results.scrollTop = title.offsetTop - results.offsetTop;
         });
         categories.appendChild(categoryLink);
@@ -40,7 +39,7 @@ const list = (options, panel, json, emit) => {
         categoryLink.setAttribute('title', category.category_label);
         categoryLink.innerHTML = category.svg;
         categoryLink.addEventListener('click', e => {
-            const title = options.container.querySelector('#' + category.category);
+            const title = panel.querySelector('#' + category.category);
             results.scrollTop = title.offsetTop - results.offsetTop;
         });
         categories.appendChild(categoryLink);
@@ -71,8 +70,6 @@ const list = (options, panel, json, emit) => {
                 } else {
                     emptyState.style.display = 'none';
                 }
-
-                emit('search', { value, matched });
 
                 emojis.forEach(emoji => {
                     if (matched.indexOf(emoji.dataset.char) == -1) {
@@ -121,7 +118,7 @@ const list = (options, panel, json, emit) => {
         for (let i = 0; i < num; i++) {
             const emoji = Frequent.findEmoji(Frequent.list[i], json)
             if (emoji) {
-                frequentResults.appendChild(Emojis.createButton(emoji, options, emit));
+                frequentResults.appendChild(Emojis.createButton(emoji, options));
             }
         }
 
@@ -142,7 +139,7 @@ const list = (options, panel, json, emit) => {
         results.appendChild(title);
 
         // Create the emoji buttons
-        category.emojis.forEach(emoji => results.appendChild(Emojis.createButton(emoji, options, emit)));
+        category.emojis.forEach(emoji => results.appendChild(Emojis.createButton(emoji, options)));
     });
 };
 

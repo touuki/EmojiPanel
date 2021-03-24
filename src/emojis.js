@@ -18,7 +18,7 @@ const Emojis = {
         }
     }),
     createEl: (emoji, options) => {
-        if (!options.fallback_emoji) {
+        if (options.sprites_url) {
             const sprite = document.createElement('div');
             sprite.style.height = '20px'
             sprite.style.width = '20px'
@@ -31,7 +31,7 @@ const Emojis = {
         // Fallback to the emoji char if the pack does not have the sprite, or no pack
         return emoji.char;
     },
-    createButton: (emoji, options, emit) => {
+    createButton: (emoji, options) => {
 
         const button = document.createElement('button');
         button.setAttribute('type', 'button');
@@ -39,21 +39,18 @@ const Emojis = {
         button.classList.add('emoji');
         button.dataset.char = emoji.char;
 
-        if (emit) {
-            button.addEventListener('click', () => {
-                emit('select', emoji);
-                if (options.frequent == true &&
-                    Frequent.add(emoji)) {
-                    let frequentResults = document.querySelector(`.${options.classnames.frequentResults}`);
+        button.addEventListener('click', () => {
+            if (options.frequent == true &&
+                Frequent.add(emoji)) {
+                let frequentResults = document.querySelector(`.${options.classnames.frequentResults}`);
 
-                    frequentResults.appendChild(Emojis.createButton(emoji, options, emit));
-                }
+                frequentResults.appendChild(Emojis.createButton(emoji, options));
+            }
 
-                if (options.editable) {
-                    Emojis.write(emoji, options);
-                }
-            });
-        }
+            if (options.editable) {
+                Emojis.write(emoji, options);
+            }
+        });
 
         return button;
     },

@@ -3,7 +3,8 @@
         overflow-y: auto;
         height: 300px;
         padding: 0 $EmojiPanel-padding-results $EmojiPanel-padding-results;
-
+        white-space: normal;
+        
         .emoji {
             background: #FFF;
         }
