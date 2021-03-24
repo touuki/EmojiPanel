@@ -16,19 +16,19 @@ const classnames = require('./classnames');
           this.emojiPanel_options = {
             frequent: true,
             hidden_categories: [],
-        
+
             sprites_url: editor.settings.emojipanel_sprites_url,
-        
+
             locale: {
-                add: 'Add emoji',
-                frequent: 'Frequently used',
-                loading: 'Loading...',
-                no_results: 'No results',
-                search: 'Search',
-                search_results: 'Search results'
+              add: 'Add emoji',
+              frequent: 'Frequently used',
+              loading: 'Loading...',
+              no_results: 'No results',
+              search: 'Search',
+              search_results: 'Search results'
             },
             icons: {
-                search: '<span class="fas fa-search"></span>'
+              search: '<span class="fas fa-search"></span>'
             },
             classnames
           }
@@ -36,9 +36,20 @@ const classnames = require('./classnames');
 
           return create.panel.outerHTML;
         },
-        onPostRender: function (e) {
+        onpostrender: function (e) {
           Emojis.load(this.emojiPanel_options)
             .then(json => List(this.emojiPanel_options, this.getEl(), json));
+        },
+        onclick: function (e) {
+          let button = null;
+          if (editor.dom.is(e.target, 'button.emoji')) {
+            button = e.target;
+          } else {
+            button = editor.dom.getParent(e.target, 'button.emoji')
+          }
+          if (button && editor.dom.getParent(button, '.' + this.emojiPanel_options.classnames.results)) {
+            editor.insertContent(button.getAttribute('data-char'));
+          }
         }
       },
       tooltip: 'Emoticons'
