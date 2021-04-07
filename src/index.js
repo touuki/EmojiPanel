@@ -4,7 +4,7 @@ const List = require('./list');
 const classnames = require('./classnames');
 
 const defaults = {
-    search: false, // Not yet implement
+    search: false, // Not implement yet
     frequent: true,
     hidden_categories: [],
 

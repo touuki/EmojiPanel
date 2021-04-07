@@ -56,7 +56,7 @@
             </section>
             <section id="editable">
                 <h3>ContentEditable</h3>
-                <p>The panel can add emoji characters to a text input or contenteditable element.</p>
+                <p>The panel can add emoji characters to a text input or contenteditable element. <a href="/examples/editable.html">Editable example</a></p>
                 <code class="full"><pre>new EmojiPanel({
         container: '#container',
         editable: '#input'
@@ -76,8 +76,8 @@
                     <tbody>
                         <tr>
                             <td>search</td>
-                            <td><code>true</code></td>
-                            <td>Enable the search feature</td>
+                            <td><code>false</code></td>
+                            <td>Enable the search feature (Not implement yet)</td>
                         </tr>
                         <tr>
                             <td>frequent</td>
@@ -85,9 +85,9 @@
                             <td>Enable the frequently used feature</td>
                         </tr>
                         <tr>
-                            <td>fitzpatrick</td>
-                            <td><code>'a'</code></td>
-                            <td>The initial skin tone modifier. Set to false to disable</td>
+                            <td>frequent_max_num</td>
+                            <td><code>false</code></td>
+                            <td>The maximum number emojis to show in frequently used. Set to false to unlimited</td>
                         </tr>
                         <tr>
                             <td>hidden_categories</td>
@@ -95,14 +95,14 @@
                             <td>Hide certain emoji categories from the results</td>
                         </tr>
                         <tr>
-                            <td>pack_url</td>
+                            <td>sprites_url</td>
                             <td></td>
                             <td>URL to the Emoji sprites</td>
                         </tr>
                         <tr>
-                            <td>json_url</td>
-                            <td><code>'/emojis.json'</code></td>
-                            <td>URL to the Emojis JSON file</td>
+                            <td>extra_json_url</td>
+                            <td><code>false</code></td>
+                            <td>URL to the extra Emojis JSON file. Set to false to use inline json.</td>
                         </tr>
                         <tr>
                             <td>tether</td>
@@ -139,7 +139,6 @@
                 <p>Set the <code>locale</code> object in options to change the translations for:</p>
                 <ul>
                     <li><code>add</code> - Add emoji</li>
-                    <li><code>brand</code> - EmojiPanel - Remove watermark with <code>''</code></li>
                     <li><code>frequent</code> - Frequently used</li>
                     <li><code>loading</code> - Loading...</li>
                     <li><code>no_results</code> - No results</li>

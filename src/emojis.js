@@ -56,19 +56,19 @@ const Emojis = {
     },
     write: (emoji, options) => {
         const input = options.editable;
-        if (!input) {
-            return;
-        }
 
-        // Insert the emoji at the end of the text by default
-        let offset = input.textContent.length;
-        if (input.dataset.offset) {
-            // Insert the emoji where the rich editor caret was
-            offset = input.dataset.offset;
+        if (typeof input.selectionStart !== 'undefined') {
+            const selectionStart = input.selectionStart;
+            const selectionEnd = input.selectionEnd;
+            input.value = input.value.substring(0, selectionStart)
+                + emoji.char + input.value.substring(selectionEnd, input.value.length);
+            input.focus();
+            input.selectionStart = selectionStart + emoji.char.length;
+            input.selectionEnd = selectionStart + emoji.char.length;
+        } else {
+            input.value += emoji.char;
+            input.focus();
         }
-
-        // Update the offset to after the inserted emoji
-        input.dataset.offset = parseInt(input.dataset.offset, 10) + 1;
     }
 };
 

@@ -19,8 +19,8 @@
         </nav>
     </header>
     <main>
-        <h3>EmojiOne pack</h3>
-        <p><a href="https://github.com/ranks/emojione">ranks/emojione</a></p>
+        <h3>Editable</h3>
+        <textarea id="editable" cols="45" rows="8" maxlength="65525" required="required"></textarea>
         <div id="container" class="demo-centerpanel"></div>
     </main>
 
@@ -31,7 +31,8 @@
         window.onload = () => {
             var emojione = new EmojiPanel({
                 container: '#container',
-                pack_url: '/img/emojione.svg'
+                editable: '#editable',
+                sprites_url: '/img/twemoji.png'
             });
         };
     </script>
