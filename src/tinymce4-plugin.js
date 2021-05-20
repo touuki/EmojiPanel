@@ -3,6 +3,12 @@ const Emojis = require('./emojis');
 const List = require('./list');
 const classnames = require('./classnames');
 
+if(!Array.prototype.find){
+  Array.prototype.find = function(callback) {
+      return callback && (this.filter(callback)|| [])[0];
+  };
+}
+
 (function (tinymce) {
 
   tinymce.PluginManager.add('emojipanel', function (editor) {
@@ -37,8 +43,7 @@ const classnames = require('./classnames');
           return create.panel.outerHTML;
         },
         onpostrender: function (e) {
-          Emojis.load(this.emojiPanel_options)
-            .then(json => List(this.emojiPanel_options, this.getEl(), json));
+          Emojis.load(this.emojiPanel_options, (err, json) => List(this.emojiPanel_options, this.getEl(), json));
         },
         onclick: function (e) {
           let button = null;

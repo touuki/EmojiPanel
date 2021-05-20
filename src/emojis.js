@@ -2,21 +2,21 @@ import Frequent from './frequent';
 
 let json = require('../dist/twemoji.json');
 const Emojis = {
-    load: options => new Promise((resolve, reject) => {
+    load: function(options, callback) {
         if (options.extra_json_url) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', options.extra_json_url, true);
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
                     json = JSON.parse(xhr.responseText);
-                    resolve(json);
+                    callback(null, json);
                 }
             };
             xhr.send();
         } else {
-            resolve(json)
+            callback(null, json)
         }
-    }),
+    },
     createEl: (emoji, options) => {
         if (options.sprites_url) {
             const sprite = document.createElement('div');

@@ -32,7 +32,7 @@ const defaults = {
 
 export default class EmojiPanel {
     constructor(options) {
-        this.options = Object.assign({}, defaults, options);
+        this.options = { ...defaults, ...options };
 
         const els = ['container', 'trigger', 'editable'];
         els.forEach(el => {
@@ -57,14 +57,13 @@ export default class EmojiPanel {
         this.panel = create.panel;
         this.tether = create.tether;
 
-        Emojis.load(this.options)
-            .then(json => {
-                List(this.options, this.panel, json);
-                if (this.options.trigger) {
-                    this.toggle();
-                    this.reposition();
-                }
-            });
+        Emojis.load(this.options, (err, json) => {
+            List(this.options, this.panel, json);
+            if (this.options.trigger) {
+                this.toggle();
+                this.reposition();
+            }
+        });
     }
 
     toggle() {
@@ -81,6 +80,12 @@ export default class EmojiPanel {
             this.tether.position();
         }
     }
+}
+
+if(!Array.prototype.find){
+    Array.prototype.find = function(callback) {
+        return callback && (this.filter(callback)|| [])[0];
+    };
 }
 
 if (typeof window != 'undefined') {

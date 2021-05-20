@@ -15,8 +15,8 @@
         <header>
             <h1>EmojiPanel</h1>
             <nav>
-                <a href="/">Home</a>
-                <a href="/examples">Examples</a>
+                <a href="#">Home</a>
+                <a href="examples">Examples</a>
             </nav>
         </header>
         <main class="home">
@@ -47,7 +47,7 @@
             </section>
             <section id="trigger">
                 <h3>Trigger mode</h3>
-                <p>In trigger mode, the EmojiPanel is hidden until triggered by a button or manually with <code>toggle()</code>.<br>Set <code>trigger</code> to <code>true</code> to allow the panel to be manually triggered. <a href="/examples/trigger.html">Trigger example</a></p>
+                <p>In trigger mode, the EmojiPanel is hidden until triggered by a button or manually with <code>toggle()</code>.<br>Set <code>trigger</code> to <code>true</code> to allow the panel to be manually triggered. <a href="examples/trigger.html">Trigger example</a></p>
                 <code class="full"><pre>new EmojiPanel({
         container: '#container',
         trigger: '#btn-trigger'
@@ -56,7 +56,7 @@
             </section>
             <section id="editable">
                 <h3>ContentEditable</h3>
-                <p>The panel can add emoji characters to a text input or contenteditable element. <a href="/examples/editable.html">Editable example</a></p>
+                <p>The panel can add emoji characters to a text input or contenteditable element. <a href="examples/editable.html">Editable example</a></p>
                 <code class="full"><pre>new EmojiPanel({
         container: '#container',
         editable: '#input'
@@ -154,11 +154,11 @@
 
     <script src="js/emojipanel.min.js"></script>
     <script>
-        window.onload = () => {
+        window.onload = function() {
             var giantEmoji = document.querySelector('.giant-emoji');
             var home = new EmojiPanel({
                 container: '#home',
-                sprites_url: '/img/twemoji.png'
+                sprites_url: 'img/twemoji.png'
             });
         };
     </script>

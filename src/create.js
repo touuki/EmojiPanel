@@ -94,7 +94,8 @@ const Create = (options, toggle) => {
         frequentResults.style.display = 'none';
 
         frequentTitle = document.createElement('p');
-        frequentTitle.classList.add(options.classnames.category, options.classnames.frequentTitle);
+        frequentTitle.classList.add(options.classnames.category);
+        frequentTitle.classList.add(options.classnames.frequentTitle);
         frequentTitle.innerHTML = options.locale.frequent;
         frequentResults.appendChild(frequentTitle);
 

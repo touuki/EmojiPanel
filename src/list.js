@@ -106,7 +106,7 @@ const list = (options, panel, json) => {
     }
 
     // Fill the results with emojis
-    results.querySelector('.EmojiPanel-loading').remove();
+    results.removeChild(results.querySelector('.EmojiPanel-loading'));
 
     if (options.frequent == true) {
         frequentResults.style.display = 'block';

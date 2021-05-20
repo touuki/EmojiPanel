@@ -7,15 +7,15 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="/css/demo.css">
-    <link rel="stylesheet" href="/css/emojipanel.min.css">
+    <link rel="stylesheet" href="../css/demo.css">
+    <link rel="stylesheet" href="../css/emojipanel.min.css">
 </head>
 <body>
     <header>
         <h1>EmojiPanel</h1>
         <nav>
-            <a href="/">Home</a>
-            <a href="/examples">Examples</a>
+            <a href="../">Home</a>
+            <a href="../examples">Examples</a>
         </nav>
     </header>
     <main>
@@ -28,7 +28,7 @@
 
     <script src="/js/emojipanel.min.js"></script>
     <script>
-        window.onload = () => {
+        window.onload = function() {
             var fallback = new EmojiPanel({
                 container: '#container'
             });
